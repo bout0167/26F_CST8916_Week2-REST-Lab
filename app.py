@@ -1,3 +1,6 @@
+#AI use disclosure: AI was used to explain the code, as well as correct my mistakes writing the code
+#AI was also used to explain the lab instructions, and to detail the steps
+
 # Import necessary modules from Flask
 # Flask: the core framework for the web app
 # jsonify: to convert Python dictionaries to JSON responses
@@ -21,6 +24,23 @@ users = [
     {"id": 2, "name": "Bob", "age": 30},
 ]
 
+tasks = [
+    {
+        "id": 1,
+        "title": "Learn REST",
+        "description": "Study REST principles",
+        "user_id": 1,
+        "completed": True
+    },
+    {
+        "id": 2,
+        "title": "Build API",
+        "description": "Complete the assignment",
+        "user_id": 2,
+        "completed": False
+    },
+
+]
 # Define route to handle requests to the root URL ('/')
 @app.route('/')
 def index():
@@ -41,6 +61,10 @@ def health_check():
 def get_users():
     return jsonify(users), 200  # 200 is the HTTP status code for 'OK'
 
+@app.route('/tasks', methods=['GET'])
+def get_tasks():
+    return jsonify(tasks), 200
+
 # Route to retrieve a single user by their ID (GET request)
 # When the client sends a GET request to /users/<id>, this function will return the user with the specified ID.
 @app.route('/users/<int:user_id>', methods=['GET'])
@@ -50,6 +74,13 @@ def get_user(user_id):
     if user is None:
         abort(404)  # If the user is not found, return a 404 error (Not Found)
     return jsonify(user), 200  # Return the user as a JSON object with a 200 status code (OK)
+
+@app.route('/tasks/<int:task_id>', methods=['GET'])
+def get_task(task_id):
+    task = next((task for task in tasks if task['id'] == task_id), None)
+    if task is None:
+        abort(404)  
+    return jsonify(task), 200  
 
 # Route to create a new user (POST request)
 # When the client sends a POST request to /users with user data, this function will add the new user to the list.
@@ -70,6 +101,31 @@ def create_user():
     users.append(new_user)
     return jsonify(new_user), 201  # 201 is the HTTP status code for 'Created'
 
+@app.route('/tasks', methods=['POST'])
+def create_task():
+
+    if not request.json or 'title' not in request.json or 'user_id' not in request.json:
+        abort(400)
+
+    user_id = request.json['user_id']
+
+    user = next((user for user in users if user['id'] == user_id), None)
+
+    if user is None:
+        abort(400)
+
+    new_task = {
+        'id': tasks[-1]['id'] + 1 if tasks else 1,
+        'title': request.json['title'],
+        'description': request.json.get('description', ""),
+        'user_id': user_id,
+        'completed': request.json.get('completed', False)
+    }
+
+    tasks.append(new_task)
+
+    return jsonify(new_task), 201
+
 # Route to update an existing user (PUT request)
 # When the client sends a PUT request to /users/<id> with updated user data, this function will update the user.
 @app.route('/users/<int:user_id>', methods=['PUT'])
@@ -89,6 +145,45 @@ def update_user(user_id):
     user['age'] = request.json.get('age', user['age'])
     return jsonify(user), 200  # Return the updated user data with a 200 status code (OK)
 
+@app.route('/tasks/<int:task_id>', methods=['PUT'])
+def update_task(task_id):
+
+    task = next((task for task in tasks if task['id'] == task_id), None)
+
+    if task is None:
+        abort(404)
+
+    if not request.json:
+        abort(400)
+
+    if 'user_id' in request.json:
+        user_id = request.json['user_id']
+
+        user = next((user for user in users if user['id'] == user_id), None)
+
+        if user is None:
+            abort(400)
+
+        task['user_id'] = user_id
+
+    task['title'] = request.json.get('title', task['title'])
+    task['description'] = request.json.get('description', task['description'])
+    task['completed'] = request.json.get('completed', task['completed'])
+
+    return jsonify(task), 200
+
+@app.route('/users/<int:user_id>/tasks', methods=['GET'])
+def get_user_tasks(user_id):
+
+    user = next((user for user in users if user['id'] == user_id), None)
+
+    if user is None:
+        abort(404)
+
+    user_tasks = [task for task in tasks if task['user_id'] == user_id]
+
+    return jsonify(user_tasks), 200
+
 # Route to delete a user (DELETE request)
 # When the client sends a DELETE request to /users/<id>, this function will remove the user with that ID.
 @app.route('/users/<int:user_id>', methods=['DELETE'])
@@ -97,6 +192,12 @@ def delete_user(user_id):
     # Rebuild the users list, excluding the user with the specified ID
     users = [user for user in users if user['id'] != user_id]
     return '', 204  # 204 is the HTTP status code for 'No Content', indicating the deletion was successful
+
+@app.route('/tasks/<int:task_id>', methods=['DELETE'])
+def delete_task(task_id):
+    global tasks  
+    tasks = [task for task in tasks if task['id'] != task_id]
+    return '', 204
 
 # Entry point for running the Flask app
 # The app will run on host 0.0.0.0 (accessible on all network interfaces) and port 8000.
