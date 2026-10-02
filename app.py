@@ -1,5 +1,6 @@
 #AI use disclosure: AI was used to explain the code, as well as correct my mistakes writing the code
 #AI was also used to explain the lab instructions, and to detail the steps
+#Claude was used to fix errors 
 
 # Import necessary modules from Flask
 # Flask: the core framework for the web app

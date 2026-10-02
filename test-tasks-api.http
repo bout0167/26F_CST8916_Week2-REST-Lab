@@ -1,21 +1,22 @@
 #GET all tasks
-GET http://localhost:8000/tasks
+GET https://remote-data-assignment-1-g2bte4gnbyhpdcf9.canadacentral-01.azurewebsites.net/tasks
 Accept: application/json
 
 ###
 # GET a specific task by ID
-GET http://localhost:8000/tasks/1
+GET https://remote-data-assignment-1-g2bte4gnbyhpdcf9.canadacentral-01.azurewebsites.net/tasks/1
 Accept: application/json
 
 ###
 #GET a non existent task 
-GET http://localhost:8000/tasks/999
+GET https://remote-data-assignment-1-g2bte4gnbyhpdcf9.canadacentral-01.azurewebsites.net/tasks/999
 Accept: application/json
 
 ###
 # POST create a new task
-POST http://localhost:8000/tasks
+POST https://remote-data-assignment-1-g2bte4gnbyhpdcf9.canadacentral-01.azurewebsites.net/tasks
 Content-Type: application/json
+
 {
     "title": "New Task",
     "description": "This is a new task",
@@ -25,8 +26,9 @@ Content-Type: application/json
 
 ###
 # POST task with invalid title
-POST http://localhost:8000/tasks
+POST https://remote-data-assignment-1-g2bte4gnbyhpdcf9.canadacentral-01.azurewebsites.net/tasks
 Content-Type: application/json
+
 {
     "description": "This task has no title.",
     "user_id": 1,
@@ -36,8 +38,9 @@ Content-Type: application/json
 ###
 
 # POST task with invalid user_id
-POST http://localhost:8000/tasks
+POST https://remote-data-assignment-1-g2bte4gnbyhpdcf9.canadacentral-01.azurewebsites.net/tasks
 Content-Type: application/json
+
 {
     "title": "Task with invalid user_id",
     "description": "This task has an invalid user_id.",
@@ -47,8 +50,9 @@ Content-Type: application/json
 
 ### 
 # PUT update a task
-PUT http://localhost:8000/tasks/1
+PUT https://remote-data-assignment-1-g2bte4gnbyhpdcf9.canadacentral-01.azurewebsites.net/tasks/1
 Content-Type: application/json
+
 {
     "title": "Updated Task Title",
     "description": "Updated description",
@@ -58,9 +62,9 @@ Content-Type: application/json
 
 ### 
 # DELETE a task
-DELETE http://localhost:8000/tasks/1
+DELETE https://remote-data-assignment-1-g2bte4gnbyhpdcf9.canadacentral-01.azurewebsites.net/tasks/1
 
 ### 
 # GET all tasks for a specific user
-GET http://localhost:8000/users/1/tasks
+GET https://remote-data-assignment-1-g2bte4gnbyhpdcf9.canadacentral-01.azurewebsites.net/users/1/tasks
 Accept: application/json
